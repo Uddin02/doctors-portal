@@ -1,16 +1,32 @@
 import { Transition } from "@headlessui/react";
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../../contexts/AuthProvider";
 
 const NavBar = () => {
+    const { user, logOut } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef();
+
+    const handleLogOut = () =>{
+      logOut()
+      .then(()=>{})
+      .catch(err=>console.log(err))
+    }
+    
     const menuItems = <React.Fragment>
         <Link className="text-gray-800 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium" to="/">Home</Link>
         <Link className="text-gray-800 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium" to="/appointment">Appointment</Link>
         <Link className="text-gray-800 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium" to="/about">About</Link>
-        <Link className="text-gray-800 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium" to="/reviews">Reviews</Link>
-        <Link className="text-gray-800 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium" to="/login">Login</Link>
+        { 
+          user?.uid ?
+          <>
+            <Link className="text-gray-800 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium" to="/dashboard">Dashboard</Link>
+            <button onClick={handleLogOut} className="text-gray-800 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium">Logout</button>
+          </>
+          :
+            <Link className="text-gray-800 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium" to="/login">Login</Link>
+        }
     </React.Fragment>
     
     const menuItemsForMobile = <React.Fragment>
@@ -18,7 +34,12 @@ const NavBar = () => {
         <Link className="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" to="/appointment">Appointment</Link>
         <Link className="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" to="/about">About</Link>
         <Link className="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" to="/reviews">Reviews</Link>
-        <Link className="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" to="/login">Login</Link>
+        { 
+          user?.uid ? 
+          <button className="text-gray-800 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium">Logout</button>
+          :
+          <Link className="text-gray-800 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium" to="/login">Login</Link>
+        }
     </React.Fragment>
     
     return (
